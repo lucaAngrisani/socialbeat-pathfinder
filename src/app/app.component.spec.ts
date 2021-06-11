@@ -1,35 +1,34 @@
-import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { AppComponent } from './app.component';
+import { AppModule } from './app.module';
+import { testMock } from './test/testMock';
 
 describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [AppComponent],
+      imports: [AppModule]
     }).compileComponents();
-  });
+  }));
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have as title 'socialbeat-pathfinder'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('socialbeat-pathfinder');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('socialbeat-pathfinder app is running!');
+  });
+
+  testMock.forEach((test) => {
+    it('testMap', async () => {
+      component.idToStart = test.idInput;
+      component.jsonInput = test.jsonInput;
+      component.objToFindInput = test.objInput;
+      let res = await component.generateOutput();
+      console.log(JSON.stringify(res));
+      expect(test.result).toEqual(res);
+    });
   });
 });
